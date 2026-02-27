@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+        DEPLOY_DIR = "/usr/share/nginx/html"
+    }
+
+    stages {
+
+        stage('Clone Repository') {
+            steps {
+                echo "Cloning GitHub repository..."
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                echo "No build required for static site"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo "Deploying website to Nginx directory..."
+
+                sh """
+                rm -rf ${DEPLOY_DIR}/*
+                cp -r * ${DEPLOY_DIR}/
+                """
+            }
+        }
+
+    }
+
+    post {
+        success {
+            echo "Website deployed successfully!"
+        }
+        failure {
+            echo "Deployment failed!"
+        }
+    }
+}
