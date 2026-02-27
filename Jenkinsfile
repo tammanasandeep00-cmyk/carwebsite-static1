@@ -1,12 +1,11 @@
-
 pipeline {
     agent any
 
     stages {
 
-        stage('Clone Code') {
+        stage('Checkout') {
             steps {
-                echo 'Cloning repository...'
+                checkout scm
             }
         }
 
@@ -17,15 +16,19 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Deploy to Nginx') {
             steps {
-                sh 'echo Testing Static Website'
+                sh '''
+                echo Deploying to /var/www/html
+                rm -rf /var/www/html/*
+                cp -r * /var/www/html/
+                '''
             }
         }
 
-        stage('Deploy') {
+        stage('Verify Deployment') {
             steps {
-                sh 'echo Deployment Stage'
+                sh 'ls -l /var/www/html'
             }
         }
     }
